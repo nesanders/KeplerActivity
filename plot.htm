@@ -1,0 +1,179 @@
+<html>
+<head>
+<script type="text/javascript"
+  src="../dygraph-combined.js"></script>
+</head>
+<body>
+
+<h1>Kepler object ID %KID%</h1>
+<h2>Stellar radius: %T% R<sub>solar</sub> </h2>
+<h2>Stellar temperature: %R% K</h2>
+
+<h2>Raw Kepler light curve data:</h2>
+<div id="graphdiv1"
+  style="width:800px; height:300px;"></div>
+
+<h2>Selected, normalized data:</h2>
+<div id="graphdiv2"
+  style="width:800px; height:500px;"></div>
+
+
+<!-- <p>Background level (brightness units): <input type="text" width="5" id="bg" value="405000"></p> -->
+<p>Time of a transit (day): <input type="text" width="5" id="t0" value="130"></p>
+<p>Orbital period (days): <input type="text" width="5" id="P" value="1"></p>
+<p>Width of transit (days): <input type="text" width="5" id="tw" value=".05"></p>
+<p>Depth of transit (brightness units): <input type="text" width="5" id="d" value="0.01"></p>
+
+<p><button id="plot">Plot</button></p>
+
+
+<h2>Folded light curve:</h2>
+<div id="graphdiv3"
+  style="width:800px; height:500px;"></div>
+
+
+
+<script type="text/javascript">
+
+
+  function IO(U, V) {//LA MOD String Version. A tiny ajax library.  by, DanDavis
+      var X = !window.XMLHttpRequest ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest();
+      X.open(V ? 'PUT' : 'GET', U, false );
+      X.setRequestHeader('Content-Type', 'text/html')
+      X.send(V ? V : '');
+      return X.responseText;
+  }	
+
+  var toArray = function(data) {
+    var lines = IO(data).split("\n");
+    var arry = [];
+    for (var idx = 0; idx < lines.length; idx++) {
+      var line = lines[idx];
+      // Oftentimes there's a blank line at the end. Ignore it.
+      if (line.length == 0) {
+	continue;
+      }
+      var row = line.split(",");
+      // No header
+      if (idx > -1) {
+// 	row[0] = new Date(row[0]); // Turn the string date into a Date.
+
+	for (var rowIdx = 0; rowIdx < row.length; rowIdx++) {
+	  // Turn "123" into 123.
+	  row[rowIdx] = parseFloat(row[rowIdx]);
+	}     
+      }     
+      arry.push(row);
+    }     
+    return arry;
+  }
+
+  var doplot = function() {
+      var t0 = parseFloat(document.getElementById("t0").value);
+      var P = parseFloat(document.getElementById("P").value);
+      var tw = parseFloat(document.getElementById("tw").value);
+      var d = parseFloat(document.getElementById("d").value);
+      var t0=t0+P/2
+
+//       var bg = parseFloat(document.getElementById("bg").value);
+
+//       var fdata=Dygraph.prototype.parseCSV_("LC_raw.csv");
+//       var fdata = toArray("LC_norm.csv");
+      
+      withmodel=[];
+      for (var idx = 0; idx < fdata.length; idx++) {
+	  var mval = 1-d*Math.exp(-Math.pow(fdata[idx][0]-t0-Math.floor((fdata[idx][0]-t0)/P)*P-P/2,2)/(2*Math.pow(tw/2,2)));
+	  withmodel.push([fdata[idx][0],fdata[idx][1],mval]);
+      };
+      
+      g2 = new Dygraph(
+	document.getElementById("graphdiv2"),
+	withmodel,
+	{
+	  rollPeriod: 1,
+	  showRoller: true,
+	  errorBars: false,
+	  ylabel: 'Star brightness (relative)',
+	  xlabel: 'Time (days)',
+	  title: 'Kepler Object ID: %KID%',
+          axes:{ y:{
+            valueFormatter: function(x){
+                return x.toFixed(5);
+            },
+            axisLabelFormatter: function(x){
+                return x.toFixed(5);
+            },
+          }}
+// 	  yFormatter: function(granularity=0.001){} ,
+	}
+      );
+
+//      var fdata = toArray("LC_norm.csv");
+      
+      folded=[];
+      for (var idx = 0; idx < fdata.length; idx++) {
+          folded.push([fdata[idx][0]-t0-Math.floor((fdata[idx][0]-t0)/P)*P-P/2,fdata[idx][1]]);
+      };
+      
+      g2 = new Dygraph(
+        document.getElementById("graphdiv3"),
+        folded,
+        {
+          rollPeriod: 1,
+          showRoller: true,
+          errorBars: false,
+          ylabel: 'Star brightness (relative)',
+          xlabel: 'Time (days)',
+          title: 'Kepler Object ID: %KID%',
+          dateWindow: [-P/2,P/2],
+          axes:{ y:{
+            valueFormatter: function(x){
+                return x.toFixed(5);
+            },
+            axisLabelFormatter: function(x){
+                return x.toFixed(5);
+            },
+          }}
+//        yFormatter: function(granularity=0.001){} ,
+        }
+      );
+  }
+
+
+  // Load files	
+  var fdata = toArray("LC_norm.csv");
+
+  var plotButton = document.getElementById("plot");
+  plotButton.onclick = doplot;
+  doplot();
+
+  g1 = new Dygraph(
+    document.getElementById("graphdiv1"),
+    "LC_raw.csv",
+    {
+      rol4lPeriod: 1,
+      showRoller: true,
+      errorBars: false,
+      drawpoints: true,
+      ylabel: 'Star brightness (absolute)',
+      xlabel: 'Time (days)',
+      title: 'Kepler Object ID: %KID%',
+    }
+  );
+
+
+</script>
+
+
+</body>
+</html>
+ 
+<!-- http://kepler.nasa.gov/Mission/discoveries/kepler14b/ -->
+
+<!-- tprint kplr001431965-2010078095331_llc.fits colu="TIME,PDCSAP_FLUX" showh=no r=50-60 showr=no -->
+
+<!--
+Data comes from: http://archive.stsci.edu/pub/kepler/lightcurves/
+Planet candidates come from: http://archive.stsci.edu/kepler/planet_candidates.html
+-->
+

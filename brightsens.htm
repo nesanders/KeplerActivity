@@ -1,0 +1,53 @@
+<html>
+<body bgcolor='black'>
+
+
+<div style='background:white;'>
+<p><em>Note: this page will not load correctly in Firefox, but should work in Safari, Opera, or Chrome</em></p>
+<p>Use this slider to change the star brightness:</p>
+<input type="range" style="width:700px;" min="900" max="1000" value="900" step="1" onLoad="showValue(0)" onchange="showValue(this.value)" />
+<p>The left star brigthness is <span id="range">100</span>% of the right star brightness.</p>
+</div>
+
+<script type="text/javascript">
+function showValue(newValue)
+{
+	var printnum=(Math.pow(10,newValue/1000-1)*100);
+	document.getElementById("range").innerHTML=printnum.toFixed(3);
+
+	var canvas = document.getElementById("circlecanvas");
+
+	var ctx = canvas.getContext("2d"); 
+	ctx.fillStyle = "rgba(0, 0, 0, 1.0)";  
+	ctx.fillRect (0, 0, 200, 200);  
+
+	var cts = canvas.getContext("2d");
+	cts.arc(100, 100, 5, 0, Math.PI * 2, false);
+	cts.fillStyle = "rgba(225,225,225, "+Math.pow(10,newValue/1000-1)+")";  
+	cts.fill();
+
+}
+</script>
+
+<div style="width: 10px; height: 10px; -webkit-border-radius: 1px; -moz-border-radius: 1px; border-radius: 1px; color:black;">&nbsp;</div>
+<div style="width: 100px; height: 100px; color:black;">&nbsp;</div>
+
+
+<canvas id="circlecanvas" width="200" height="200"></canvas>
+<canvas id="standardcanvas" width="200" height="200"></canvas>
+
+<script type="text/javascript">
+  var canvas = document.getElementById("standardcanvas");
+
+  var ctx = canvas.getContext("2d"); 
+  ctx.fillStyle = "rgba(0, 0, 0, 1.0)";  
+  ctx.fillRect (0, 0, 200, 200);  
+
+  var cts = canvas.getContext("2d");
+  cts.arc(100, 100, 5, 0, Math.PI * 2, false);
+  cts.fillStyle = "rgba(225,225,225,1)";  
+  cts.fill();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<html>
+<body bgcolor='black'>
+
+<h2 style='color:white'>Scale diagram of an exoplanetary system:</h2>
+<div style='background:white;'>
+<p>The radius of the star (Solar radii): <input id="Rs" type="text" value="1" onLoad="diagram()" onchange="diagram()" /></p>
+<p>The radius of the planet (Earth radii): <input id="Rp" type="text" value="10" onLoad="diagram()" onchange="diagram()" /></p>
+<p>The semi-major axis of the planet (AU): <input id="d" type="text" value="0.1" onLoad="diagram()" onchange="diagram()" /></p>
+<p>The inner radius of the habitable zone (AU): <input id="Hi" type="text" value="0.12" onLoad="diagram()" onchange="diagram()" /></p>
+<p>The outer radius of the habitable zone (AU): <input id="Ho" type="text" value="0.3" onLoad="diagram()" onchange="diagram()" /></p>
+<p>Zoom: <input id="sf" style='width:400px' type="range" step="0.01" value="30" min="0.01" max="500"  onLoad="diagram()" onchange="diagram()" /></p>
+</div>
+
+<canvas id="theplot" width="2000" height="400"></canvas>
+
+
+<script type="text/javascript">
+function diagram()
+{
+	var d=parseFloat(document.getElementById("d").value);
+        var Rs=parseFloat(document.getElementById("Rs").value);
+        var Rp=parseFloat(document.getElementById("Rp").value);
+        var Hi=parseFloat(document.getElementById("Hi").value);
+        var Ho=parseFloat(document.getElementById("Ho").value);
+        var sf=parseFloat(document.getElementById("sf").value);
+	
+	var canvas = document.getElementById("theplot");
+        canvas.width=canvas.width;
+        var draw = canvas.getContext("2d");
+
+        draw.beginPath();
+	draw.arc(50, 100, sf*Rs, 0, Math.PI * 2, false);
+	draw.fillStyle = "yellow";  
+	draw.fill();
+
+        draw.beginPath();
+        draw.arc(50+217*sf*d, 100, sf*Rp/109, 0, Math.PI * 2, false);
+        draw.fillStyle = "red";  
+        draw.fill();
+
+        draw.beginPath();
+        draw.arc(50, 100, 217*sf*(Hi+Ho)/2, 3.14, 2*Math.PI * 2, false);
+//         draw.arc(50, 100, 200, 0, Math.PI * 2, false);
+        draw.lineWidth=217*sf*(Ho-Hi);
+        draw.strokeStyle="rgba(255,255,255,0.5)";  
+        draw.stroke();
+
+};
+diagram();
+</script>
+
+
+</body>
+</html>
