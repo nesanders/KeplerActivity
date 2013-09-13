@@ -101,27 +101,3 @@ sedline='cat plot.htm|sed s/%KID%/'+KID+'/g|sed s/%T%/'+temp+'/g|sed s/%R%/'+rad
 os.system(sedline)
 
 
-####fold
-##dips at 224.05,221.59
-##middle is 224.05
-##period is 2.46
-
-##foldt=zeros(len(cat))
-##for i in range(len(cat)):
-  ##foldt[i]=cat[i]-224.05-floor((cat[i]-224.05)/2.46)*2.46
-
-#def foldit(p,x,y):
-  #cx=x-p[0]-floor((x-p[0])/p[1])*p[1]
-  #cf=1-p[2]*exp(-(cx-(p[1]/2.))**2/(2*p[3]**2))
-  #r=cf-y
-  #return r
-
-#guess=[224.05,2.46,0.015,0.032]
-
-#best=leastsq(foldit,guess,args=(cat,caf))[0]
-
-#foldt=cat-best[0]-floor((cat-best[0])/best[1])*best[1]
-#plt.plot(foldt,caf,'o')
-
-
-
